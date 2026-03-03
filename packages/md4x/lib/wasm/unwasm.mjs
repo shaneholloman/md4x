@@ -8,7 +8,7 @@ export {
   renderToText,
 } from "./common.mjs";
 
-import { _setInstance, _imports } from "./common.mjs";
+import { _setInstance, _hasInstance, _imports } from "./common.mjs";
 
 export async function init() {
   if (_hasInstance()) {
