@@ -5,8 +5,21 @@
 
 Fast and Small markdown parser and renderer based on [mity/md4c](https://github.com/mity/md4c/).
 
-> [!TIP]
-> [Online Playground](https://md4x.pi0.io/#/playground)
+**[Online Playground](https://md4x.pi0.io/#/playground)**
+
+## Features
+
+- **Fast** — Written in C, ~6x faster than markdown-it ([benchmarks](#javascript))
+- **Small** — ~90KB gzip WASM binary
+- **Multi-format output** — HTML, JSON AST ([Comark](https://md4x.pi0.io/#/playground)), ANSI terminal, plain text, metadata
+- **Streaming heal** — Fix incomplete markdown from LLM output in real-time
+- **Full CommonMark** — Passes the [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) spec
+- **Rich extensions** — Tables, task lists, strikethrough, LaTeX math, wiki links, underline, frontmatter, alerts, inline attributes
+- **[MDC syntax](https://md4x.pi0.io/#/playground)** — Block and inline components with props, slots, and YAML frontmatter
+- **Universal JS** — Native Node.js addon (NAPI) + portable WASM for browsers, Deno, Bun, edge workers
+- **C library** — SAX-like streaming parser, zero-copy, no AST allocation overhead
+- **Zig package** — Consumable as a Zig dependency via `build.zig.zon`
+- **CLI** — Render local files, remote URLs, GitHub repos, npm packages
 
 ## CLI
 
@@ -93,7 +106,8 @@ const html = renderToHtml("# Hello");
 
 `init()` accepts an optional options object with a `wasm` property (`ArrayBuffer`, `Response`, `WebAssembly.Module`, or `Promise<Response>`). When called with no arguments, it loads the bundled `.wasm` file automatically.
 
-### Benchmarks
+<details>
+<summary>Benchmarks</summary>
 
 (source: [packages/md4x/bench](./packages/md4x/bench))
 
@@ -140,6 +154,8 @@ summary
 
 Note: markdown-it parser returns an array of tokens while md4x returns nested comark AST.
 
+</details>
+
 ### Markdown Healing
 
 `heal()` fixes incomplete markdown from streaming LLM output — closing unclosed bold, italic, strikethrough, inline code, code blocks, links, and more. Useful for rendering partial markdown in real-time as tokens arrive (inspired by [streamdown/remend](https://github.com/vercel/streamdown/tree/main/packages/remend)).
@@ -174,6 +190,9 @@ renderToText("# Hello **world", { heal: true });
 renderToHtml("# Hello **world", { heal: true, full: true });
 ```
 
+<details>
+<summary>Benchmarks</summary>
+
 ```
 bun packages/md4x/bench/heal.mjs
 
@@ -205,6 +224,8 @@ summary
    1.45x faster than md4x-wasm heal (large)
    115.18x faster than remend heal (large)
 ```
+
+</details>
 
 ## Zig Package
 
