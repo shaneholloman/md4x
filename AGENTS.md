@@ -242,6 +242,32 @@ The AST renderer (`md4x-ast.c`) uses a `JSON_NODE` struct with a C union for typ
 1. **Double-free** — `json_node_free` frees the same union pointer via both the static tag cleanup and the dynamic cleanup (heap corruption, OOB in WASM)
 2. **Wrong serialization** — `json_write_props` reads the union as the wrong type (e.g. interprets `raw_props` pointer as `alert.type_name`)
 
+### Memory Safety Patterns (Common Bug Classes)
+
+Based on past bugs found via fuzzing. **Check these patterns when modifying C code or reviewing for vulnerabilities:**
+
+1. **Fixed-size stack buffers without overflow handling** — Every fixed-size array (e.g. `deferred_comp_closers[16]`, stack-allocated `MD_LINE` arrays) needs explicit bounds checking at every insertion point. Silent drops are as dangerous as overflows — they corrupt downstream state (e.g. `ctx->marks[-1]` OOB).
+
+2. **Stale pointers after realloc** — Never cache pointers into growable buffers (`buf->data`, `ctx->comp_info`, etc.) across calls that may reallocate. Assign results immediately after each `realloc` before doing the next one. A double-realloc sequence where the first succeeds and the second fails can cause double-free if intermediate results aren't stored.
+
+3. **Union type confusion with dynamic components** — See "AST Renderer: Union Safety" above. Always check `tag_is_dynamic` before `strcmp(node->tag, ...)`. This is the project's most recurring bug class.
+
+4. **Unbalanced SAX callbacks** — Renderers must be defensive against unbalanced `enter`/`leave` callbacks from the parser. Always guard state transitions (stack pops, counter decrements) with the correct type check. Handle NULL `ctx->current` / stack underflow gracefully. Example: `json_leave_span` must only decrement `image_nesting` for `MD_SPAN_IMG`, not all span types.
+
+5. **Unchecked `malloc`/`realloc`** — Every allocation must be checked for NULL. Use error flags on growable buffers and propagate failures up. Silent OOM produces corrupted output, dropped props, or incomplete nodes.
+
+6. **Assertions as `__builtin_unreachable()`** — With UBSan, `MD_ASSERT` compiles to `__builtin_unreachable()`, so a wrong assertion is a crash, not a debug message. Don't assert invariants that edge-case inputs can violate — prefer defensive guards.
+
+7. **Uncapped user-controlled ranges** — Cap ranges from user input (e.g. highlight ranges `{1-99999}`) at reasonable limits to prevent excessive allocation.
+
+**Audit checklist when reviewing C changes:**
+- Search for fixed-size arrays → verify bounds checks at every insertion
+- Search for pointer caching across realloc → verify no stale pointer use after buffer growth
+- Audit `strcmp(node->tag, ...)` dispatch → verify `tag_is_dynamic` checked first
+- Audit `leave_block`/`leave_span` callbacks → verify correct type guard and underflow handling
+- Search for unchecked `malloc`/`realloc` → every allocation needs NULL check
+- Search for `MD_ASSERT` → verify condition cannot be violated by any input
+
 ### WASM Binary
 
 The WASM binary (`packages/md4x/build/md4x.wasm`) is gitignored and must be rebuilt with `zig build wasm` after C source changes. The `zig build wasm` step installs directly to `packages/md4x/build/`. Run `bun vitest run packages/md4x/test/wasm.test.mjs` to verify.
