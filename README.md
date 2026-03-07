@@ -1,7 +1,7 @@
 # 📄 MD4X
 
-[![npm version](https://img.shields.io/npm/v/md4x?style=flat&colorA=18181B&colorB=F0DB4F)](https://npmx.dev/package/md4x)
-![md4x.wasm gzip size](<https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdeno.bundlejs.com%2F%3Fq%3Dmd4x%2Fbuild%2Fmd4x.wasm&query=%24.size.compressedSize&label=md4x.wasm%20(gzip)&style=flat&colorA=18181B&colorB=F0DB4F>)
+[![npm version][npm version]][npm link]
+![md4x.wasm gzip size][wasm size]
 
 Fast and Small markdown parser and renderer based on [mity/md4c](https://github.com/mity/md4c/).
 
@@ -9,17 +9,19 @@ Fast and Small markdown parser and renderer based on [mity/md4c](https://github.
 
 ## Features
 
-- **Fast** — Written in C, ~6x faster than markdown-it ([benchmarks](#javascript))
-- **Small** — ~90KB gzip WASM binary
-- **Multi-format output** — HTML, JSON AST ([Comark](https://md4x.pi0.io/#/playground)), ANSI terminal, plain text, metadata
+- **Fast** — Written in C, **~6x** faster than markdown-it
+- **CLI** — Render local files, remote URLs, GitHub repos, npm packages
+- **Small** — **~90KB** gzip WASM binary works in Node.js and Browser
+- **Multi-format output** — HTML, JSON AST, ANSI terminal, plain text, metadata
 - **Streaming heal** — Fix incomplete markdown from LLM output in real-time
-- **Full CommonMark** — Passes the [CommonMark 0.31.2](https://spec.commonmark.org/0.31.2/) spec
-- **Rich extensions** — Tables, task lists, strikethrough, LaTeX math, wiki links, underline, frontmatter, alerts, inline attributes
-- **[MDC syntax](https://md4x.pi0.io/#/playground)** — Block and inline components with props, slots, and YAML frontmatter
+- **Full CommonMark** — Passes the CommonMark spec
+- **GitHub Flavored Markdown** — Tables, task lists, strikethrough, autolinks, alerts
+- **Built-in YAML frontmatter** — Parsed via libyaml into structured data
+- **Extra extensions** — LaTeX math, wiki links, underline, inline attributes
+- **Comark (MDC) support** — Block and inline components with props, slots
 - **Universal JS** — Native Node.js addon (NAPI) + portable WASM for browsers, Deno, Bun, edge workers
 - **C library** — SAX-like streaming parser, zero-copy, no AST allocation overhead
-- **Zig package** — Consumable as a Zig dependency via `build.zig.zon`
-- **CLI** — Render local files, remote URLs, GitHub repos, npm packages
+- **Zig package** — Consumable as a Zig dependency
 
 ## CLI
 
@@ -339,3 +341,9 @@ md_parse(input, input_size, &parser, NULL);
 ## License
 
 [MIT](./LICENSE.md)
+
+---
+
+[npm version]: https://badgen.net/npm/v/md4x?color=F0DB4F
+[npm link]: https://npmx.dev/package/md4x
+[wasm size]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fmd4x.pi0.io%2F_badges%2Fwasm-size.json&query=$.size.compressedSize&label=md4x.wasm%20(gzip)&style=flat&colorA=18181B&colorB=F0DB4F
