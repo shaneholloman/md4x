@@ -5,7 +5,7 @@
 
 Fast and Small markdown parser and renderer based on [mity/md4c](https://github.com/mity/md4c/).
 
-**[Online Playground](https://md4x.pi0.io/#/playground)**
+**[Online Playground](https://md4x.unjs.io/#/playground)**
 
 ## Features
 
@@ -346,4 +346,4 @@ md_parse(input, input_size, &parser, NULL);
 
 [npm version]: https://badgen.net/npm/v/md4x?color=F0DB4F
 [npm link]: https://npmx.dev/package/md4x
-[wasm size]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fmd4x.pi0.io%2F_badges%2Fwasm-size.json&query=$.size.compressedSize&label=md4x.wasm%20(gzip)&style=flat&colorA=18181B&colorB=F0DB4F
+[wasm size]: https://badgen.net/https/md4x.unjs.io/_badges/wasm-size.json?1

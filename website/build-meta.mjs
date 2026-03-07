@@ -12,19 +12,16 @@ function formatSize(bytes) {
   return kb < 100 ? `${kb.toFixed(1)} kB` : `${Math.round(kb)} kB`;
 }
 
+const compressedSize = formatSize(gzipped.byteLength);
+
 const result = {
-  size: {
-    type: "gzip",
-    rawUncompressedSize: raw.byteLength,
-    uncompressedSize: formatSize(raw.byteLength),
-    rawCompressedSize: gzipped.byteLength,
-    compressedSize: formatSize(gzipped.byteLength),
-    size: `${formatSize(gzipped.byteLength)} (gzip)`,
-  },
+  subject: "md4x.wasm (gzip)",
+  status: compressedSize,
+  color: "F0DB4F",
 };
 
 const badgesDir = new URL("dist/_badges/", import.meta.url);
 mkdirSync(badgesDir, { recursive: true });
 writeFileSync(new URL("wasm-size.json", badgesDir), JSON.stringify(result));
 
-console.log(`wasm: ${result.size.size} (raw: ${result.size.uncompressedSize})`);
+console.log(`wasm: ${compressedSize} (gzip)`);
